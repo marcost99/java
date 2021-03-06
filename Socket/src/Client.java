@@ -42,16 +42,16 @@ public class Client extends Thread {
 			String name_client;
 			String subject;
 			
-			// why this code (before of while) is executed only in the first execution?
+			// why this code (before of while) is executed only in the first execution? Answer: The code get stuck inside of loop. When the code exit of loop the connection with the socket is finalized
 			
 			// variable that store an object that management the data receive of keyboard
-			BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 			
 			// show message on console
 			System.out.println("Informe o nome do cliente:");
 			
 			// variable that store an object started before. While none data be typed the code not continue
-			name_client = teclado.readLine();
+			name_client = keyboard.readLine();
 			
 			// show message on console
 			System.out.println(name_client + " entrou do chat!");
@@ -72,10 +72,10 @@ public class Client extends Thread {
 			System.out.println("Servidor: " + message_received);
 			
 			// show message on console
-			System.out.println("Informe o assunto:");
+			System.out.println("Informe um assunto: Economia | Entretenimento | Tecnologia");
 			
 			// variable that store an object started before. While none data be typed the code not continue
-			subject = teclado.readLine();
+			subject = keyboard.readLine();
 			
 			// sends a line for server. Is necessary the '\n' for the code continue
 			output_server.writeBytes(subject + '\n');
@@ -88,9 +88,9 @@ public class Client extends Thread {
 			
 			// while the class be execution
 			while (true) {
-			
-				// read a line of keyboard
-				message_typed = teclado.readLine();
+				
+				// read a line of keyboard. While none data be typed the code not continue
+				message_typed = keyboard.readLine();
 				
 				// verifies if the chat is must be terminated
 				if (message_typed.startsWith("fim") == true)

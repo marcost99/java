@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 public class Server extends Thread {
@@ -11,22 +14,13 @@ public class Server extends Thread {
 	// properties
 	// the variable of connection is not static because the your content not is shared between the various objects of class Server
 	private Socket connection;
-	private static Vector<DataOutputStream> vOutputEconomy;
-	private static Vector<DataOutputStream> vOutputEntertainment;
-	private static Vector<DataOutputStream> vOutputTechnology;
-	private static Vector<String> vSubjectEconomy;
-	private static Vector<String> vSubjectEntertainment;
-	private static Vector<String> vSubjectTechnology;
+	private static Vector<DataOutputStream> vOutputEconomy = new Vector<DataOutputStream>();
+	private static Vector<DataOutputStream> vOutputEntertainment = new Vector<DataOutputStream>();
+	private static Vector<DataOutputStream> vOutputTechnology = new Vector<DataOutputStream>();
 	
 	// method construct
 	public Server (Socket s) {
 		connection =  s;
-		vOutputEconomy = new Vector<DataOutputStream>(); 
-		vOutputEntertainment = new Vector<DataOutputStream>(); 
-		vOutputTechnology = new Vector<DataOutputStream>();; 
-		vSubjectEconomy = new Vector<String>(); 
-		vSubjectEntertainment = new Vector<String>(); 
-		vSubjectTechnology = new Vector<String>();
 	}
 
 	// method main. Is executed by default when the class is started
@@ -72,7 +66,7 @@ public class Server extends Thread {
 		// try to run the code below
 		try {
 			
-			// why this code (before of while) is executed only in the first execution?
+			// why this code (before of while) is executed only in the first execution? Answer: The code get stuck inside of loop. When the code exit of loop the connection with the socket is finalized
 			
 			input_client = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			
@@ -88,32 +82,30 @@ public class Server extends Thread {
 			// read a name receive of client. While none data be typed the code not continue
 			subject_client = input_client.readLine();
 			
-			// sends return for client
-			output_client.writeBytes("O assunto [" + subject_client + "] foi registrado!\n");
-			
 			// add the client in the vector
 			switch(subject_client) {
-			  case "economy":
+			  case "Economia":
 				  vOutputEconomy.add(output_client);
-				  vSubjectEconomy.add(subject_client);
 			    break;
-			  case "entertainment":
+			  case "Entretenimento":
 				  vOutputEntertainment.add(output_client);
-				  vSubjectEntertainment.add(subject_client);
 			    break;
-			  case "technology":
+			  case "Tecnologia":
 				  vOutputTechnology.add(output_client);
-				  vSubjectTechnology.add(subject_client);
 			    break;
 			  default:
 				  vOutputEntertainment.add(output_client);
-				  vSubjectEntertainment.add("entertainment");
+				  subject_client = "Entretenimento";
 			}
+			
+			// sends return for client
+			output_client.writeBytes("O assunto [" + subject_client + "] foi registrado!\n");
 			
 			// read a message receive of client. While none data be typed the code not continue
 			message_received = input_client.readLine();
 			
 			Integer i;
+			Vector<DataOutputStream> v;
 
 			// while the message received not be null or equal the finish
 			while (message_received != null && !(message_received.trim().equals("")) && !(message_received.startsWith("fim"))) {
@@ -122,26 +114,30 @@ public class Server extends Thread {
 				System.out.println(name_client + ": " + message_received);
 
 				// creates message of return for client
-				message_sended = name_client + ": " + message_received + '\n';
+				message_sended = " <" + name_client + "> : <" + subject_client + "> : <" + message_received + "> : <" + getDateTime() + ">\n";
 				
+				// return the vector by subject
+				switch(subject_client) {
+				  case "Economia":
+					  v = vOutputEconomy;
+				    break;
+				  case "Entretenimento":
+					  v = vOutputEntertainment;
+				    break;
+				  case "Tecnologia":
+					  v = vOutputTechnology;
+				    break;
+				  default:
+					  v = vOutputEntertainment;
+				}
+				
+				// sends the message received for all the clients except for the sender
 				i = 0;
-				while (i < vOutputEconomy.size()) {
-					
-					System.out.println(vOutputEconomy.get(i));
-					System.out.println(output_client);
-					System.out.println(name_client);
-					System.out.println(vSubjectEconomy.get(i));
-					System.out.println(subject_client);
-					// although the property static be utilized every time a client creates a new instance Server the vector is recreated
-					System.out.println(vOutputEconomy.size());
-					
-					if((subject_client.equals(vSubjectEconomy.get(i))) /*&& (vOutputEconomy.get(i) != output_client)*/) {
-						
+				while (i < v.size()) {
+					if(v.get(i) != output_client) {				
 						// sends return for client
-						vOutputEconomy.get(i).writeBytes(message_sended);
-						
+						v.get(i).writeBytes(message_sended);
 					}
-					
 					i = i + 1;
 				}
 				
@@ -160,6 +156,12 @@ public class Server extends Thread {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private static String getDateTime() { 
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); 
+		Date date = new Date(); 
+		return dateFormat.format(date); 
 	}
 
 }
