@@ -54,7 +54,7 @@ public class Server extends Thread {
 	// implements the method run() of Thread class. This method is executed after the call of method start()
 	public void run() {
 		
-		// declare variables of control
+		// declares variables of control
 		String message_received;
 		String message_sended;
 		String name_client;
@@ -77,35 +77,47 @@ public class Server extends Thread {
 			name_client = input_client.readLine();
 			
 			// sends return for client
-			output_client.writeBytes("Olá " + name_client + "!\n");
+			output_client.writeBytes("<Servidor> : <Olá " + name_client + "!> : <" + getDateTime() + ">\n");
 			
 			// read a name receive of client. While none data be typed the code not continue
 			subject_client = input_client.readLine();
 			
-			// add the client in the vector
+			// declares variables of control
+			Integer i;
+			Vector<DataOutputStream> v;
+			
+			// add the client in the vector and sets the vector by subject
 			switch(subject_client) {
-			  case "Economia":
+			  case "1":
 				  vOutputEconomy.add(output_client);
+				  v = vOutputEconomy;
+				  subject_client = "Economia";
 			    break;
-			  case "Entretenimento":
+			  case "2":
 				  vOutputEntertainment.add(output_client);
+				  v = vOutputEntertainment;
+				  subject_client = "Entretenimento";
 			    break;
-			  case "Tecnologia":
+			  case "3":
 				  vOutputTechnology.add(output_client);
+				  v = vOutputTechnology;
+				  subject_client = "Tecnologia";
 			    break;
 			  default:
 				  vOutputEntertainment.add(output_client);
+				  v = vOutputEntertainment;
 				  subject_client = "Entretenimento";
 			}
 			
-			// sends return for client
-			output_client.writeBytes("O assunto [" + subject_client + "] foi registrado!\n");
+			// sends the message received for all the clients of same subject
+			i = 0;
+			while (i < v.size()) {
+				v.get(i).writeBytes("<Servidor> : <" + name_client + " entrou no chat [" + subject_client + "]!> : <" + getDateTime() + ">\n");
+				i = i + 1;
+			}
 			
 			// read a message receive of client. While none data be typed the code not continue
 			message_received = input_client.readLine();
-			
-			Integer i;
-			Vector<DataOutputStream> v;
 
 			// while the message received not be null or equal the finish
 			while (message_received != null && !(message_received.trim().equals("")) && !(message_received.startsWith("fim"))) {
@@ -115,21 +127,6 @@ public class Server extends Thread {
 
 				// creates message of return for client
 				message_sended = " <" + name_client + "> : <" + subject_client + "> : <" + message_received + "> : <" + getDateTime() + ">\n";
-				
-				// return the vector by subject
-				switch(subject_client) {
-				  case "Economia":
-					  v = vOutputEconomy;
-				    break;
-				  case "Entretenimento":
-					  v = vOutputEntertainment;
-				    break;
-				  case "Tecnologia":
-					  v = vOutputTechnology;
-				    break;
-				  default:
-					  v = vOutputEntertainment;
-				}
 				
 				// sends the message received for all the clients except for the sender
 				i = 0;
@@ -146,8 +143,16 @@ public class Server extends Thread {
 				
 			}
 
-			// show message on console
-			System.out.println("Cliente desconectado!");
+			// sends the message received for all the clients of same subject
+			/*
+			i = 0;
+			while (i < v.size()) {
+				if(v.get(i) != output_client) {
+					v.get(i).writeBytes("<Servidor> : <" + name_client + " saiu do chat [" + subject_client + "]!> : <" + getDateTime() + ">\n");
+				}
+				i = i + 1;
+			}
+			*/
 			
 			// close the connection of server object
 			connection.close();
@@ -159,7 +164,6 @@ public class Server extends Thread {
 	}
 	
 	private static String getDateTime() { 
-		//DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		DateFormat dateFormat = new SimpleDateFormat("HH:mm"); 
 		Date date = new Date(); 
 		return dateFormat.format(date); 

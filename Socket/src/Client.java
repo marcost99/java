@@ -22,7 +22,7 @@ public class Client extends Thread {
 	
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		
-		// declare variables of control
+		// declares variables of control
 		String message_received;
 		String name_client;
 		String subject;
@@ -41,9 +41,6 @@ public class Client extends Thread {
 		// variable that store an object the create and management the socket of access to the server on port 8657
 		Socket conn = new Socket("localhost", 8657);
 		
-		// show message on console
-		System.out.println(name_client + " entrou do chat!");
-		
 		// variable that store an object that sends messages
 		DataOutputStream output_server = new DataOutputStream(conn.getOutputStream());
 		
@@ -57,10 +54,10 @@ public class Client extends Thread {
 		message_received = input_server.readLine();
 		
 		// show the line read by server
-		System.out.println("Servidor: " + message_received);
+		System.out.println(message_received);
 		
 		// show message on console
-		System.out.println("Informe um assunto: Economia | Entretenimento | Tecnologia");
+		System.out.println("Informe um assunto: 1- Economia | 2- Entretenimento | 3- Tecnologia");
 		
 		// variable that store an object started before. While none data be typed the code not continue
 		subject = keyboard.readLine();
@@ -72,7 +69,7 @@ public class Client extends Thread {
 		message_received = input_server.readLine();
 		
 		// show the line read by server
-		System.out.println("Servidor: " + message_received);
+		System.out.println(message_received);
 		
 		// initializes a new object of Client class for receive messages instant
 		Thread t = new Client (input_server);
@@ -95,11 +92,10 @@ public class Client extends Thread {
 			
 		}
 		
+		System.out.println("Você saiu do chat!");
+		
 		// close the connection of client object
 		conn.close();
-		
-		// show message on console
-		System.out.println(name_client + " saiu do chat!");
 		
 	}
 	
