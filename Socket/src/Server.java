@@ -54,7 +54,7 @@ public class Server extends Thread {
 	// implements the method run() of Thread class. This method is executed after the call of method start()
 	public void run() {
 		
-		//
+		// declare variables of control
 		String message_received;
 		String message_sended;
 		String name_client;
@@ -159,7 +159,8 @@ public class Server extends Thread {
 	}
 	
 	private static String getDateTime() { 
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); 
+		//DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat("HH:mm"); 
 		Date date = new Date(); 
 		return dateFormat.format(date); 
 	}
