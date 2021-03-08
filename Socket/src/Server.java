@@ -144,15 +144,21 @@ public class Server extends Thread {
 			}
 
 			// sends the message received for all the clients of same subject
-			/*
 			i = 0;
 			while (i < v.size()) {
-				if(v.get(i) != output_client) {
-					v.get(i).writeBytes("<Servidor> : <" + name_client + " saiu do chat [" + subject_client + "]!> : <" + getDateTime() + ">\n");
+				v.get(i).writeBytes("<Servidor> : <" + name_client + " saiu do chat [" + subject_client + "]!> : <" + getDateTime() + ">\n");
+				i = i + 1;
+			}
+			
+			// remove of vector the client that exit of chat
+			i = 0;
+			while (i < v.size()) {
+				if(v.get(i) == output_client) {
+					v.remove(v.get(i));
+					System.out.println("Cliente desconectado!");
 				}
 				i = i + 1;
 			}
-			*/
 			
 			// close the connection of server object
 			connection.close();

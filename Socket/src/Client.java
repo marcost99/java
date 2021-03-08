@@ -16,8 +16,8 @@ public class Client extends Thread {
 	public Client (BufferedReader i) {
 		// sets the property that store the object that receive messages of class Server
 		input = i;
-		// sets the property for not permit error with the method equals()
-		message_typed = "";
+		// sets the property for not permit that loop be finalized
+		message_typed = "Not Null";
 	}
 	
 	public static void main(String[] args) throws UnknownHostException, IOException {
@@ -83,16 +83,22 @@ public class Client extends Thread {
 			// read a line of keyboard. While none data be typed the code not continue
 			message_typed = keyboard.readLine();
 			
+			// sends a line for server. Is necessary the '\n' for the code continue
+			output_server.writeBytes(message_typed + '\n');
+			
 			// verifies if the chat is must be terminated
 			if (message_typed.startsWith("fim") == true)
 			break;
 			
-			// sends a line for server. Is necessary the '\n' for the code continue
-			output_server.writeBytes(message_typed + '\n');
-			
 		}
 		
-		System.out.println("Você saiu do chat!");
+		// read a line of server
+		message_received = input_server.readLine();
+		
+		// show the line read by server
+		if (message_received != null) {
+			System.out.println(message_received);
+		}
 		
 		// close the connection of client object
 		conn.close();
@@ -102,8 +108,7 @@ public class Client extends Thread {
 	public void run() {
 		try {
 			// verifies if the chat is must be terminated
-			while (!message_typed.equals("fim")) {
-				// read a line of server
+			while (message_typed != null && !(message_typed.trim().equals("")) && !(message_typed.startsWith("fim"))) {
 				System.out.println(input.readLine());
 			}
 		} catch (IOException e) {
