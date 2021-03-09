@@ -111,9 +111,11 @@ public class Client extends Thread {
 			while (message_typed != null && !(message_typed.trim().equals("")) && !(message_typed.startsWith("fim"))) {
 				System.out.println(input.readLine());
 			}
+			// shut down the object of class Client
+			System.exit(0);
 		} catch (IOException e) {
-			// in case of error the object of class Client is finalized
-			//e.printStackTrace();
+			// in case of error shut down the object of class Client
+			System.exit(0);
 		}
 	}
 	
